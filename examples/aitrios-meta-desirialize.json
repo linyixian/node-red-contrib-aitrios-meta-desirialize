@@ -1,0 +1,116 @@
+[
+    {
+        "id": "9af20e483c74369e",
+        "type": "aitrios-put-in",
+        "z": "3be3fb34d14cae3d",
+        "name": "",
+        "url": "/meta/:filename",
+        "swaggerDoc": "",
+        "x": 140,
+        "y": 140,
+        "wires": [
+            [
+                "b428401d70b70aa6",
+                "0c98c596b7a9a45c"
+            ]
+        ]
+    },
+    {
+        "id": "b428401d70b70aa6",
+        "type": "json",
+        "z": "3be3fb34d14cae3d",
+        "name": "",
+        "property": "payload",
+        "action": "obj",
+        "pretty": false,
+        "x": 330,
+        "y": 140,
+        "wires": [
+            [
+                "c3916cb3c07df896"
+            ]
+        ]
+    },
+    {
+        "id": "5f14ce7d7550bba2",
+        "type": "debug",
+        "z": "3be3fb34d14cae3d",
+        "name": "debug 1",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1120,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "c3916cb3c07df896",
+        "type": "change",
+        "z": "3be3fb34d14cae3d",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.Inferences[0].O",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 500,
+        "y": 140,
+        "wires": [
+            [
+                "2d674ac9dfbcd57a"
+            ]
+        ]
+    },
+    {
+        "id": "0c98c596b7a9a45c",
+        "type": "http response",
+        "z": "3be3fb34d14cae3d",
+        "name": "",
+        "statusCode": "200",
+        "headers": {},
+        "x": 340,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "2d674ac9dfbcd57a",
+        "type": "base64",
+        "z": "3be3fb34d14cae3d",
+        "name": "",
+        "action": "",
+        "property": "payload",
+        "x": 680,
+        "y": 140,
+        "wires": [
+            [
+                "712801771ee1103f"
+            ]
+        ]
+    },
+    {
+        "id": "712801771ee1103f",
+        "type": "aitrios-meta-desirialize",
+        "z": "3be3fb34d14cae3d",
+        "name": "",
+        "x": 900,
+        "y": 140,
+        "wires": [
+            [
+                "5f14ce7d7550bba2"
+            ]
+        ]
+    }
+]

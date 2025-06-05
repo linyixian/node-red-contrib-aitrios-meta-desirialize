@@ -1,0 +1,80 @@
+<script type="text/javascript">
+    RED.nodes.registerType('aitrios-meta-desirialize',{
+        category: 'function',
+        color: '#A6BBCF',
+        defaults: {
+            name: {value:""}
+        },
+        inputs:1,
+        outputs:1,
+        icon: "parser-json.svg",
+        label: function() {
+            return this.name || "AITRIOS Meta Deserialize";
+        },
+        paletteLabel: "AITRIOS Meta Deserialize",
+        labelStyle: function() {
+            return this.name?"node_label_italic":"";
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="aitrios-meta-desirialize">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+</script>
+
+<script type="text/html" data-help-name="aitrios-meta-desirialize">
+    <p>A Node-RED node that deserializes AITRIOS metadata from FlatBuffers binary format to JSON.</p>
+
+    <h3>Input</h3>
+    <dl class="message-properties">
+        <dt>payload <span class="property-type">buffer</span></dt>
+        <dd>The binary FlatBuffers data to deserialize. Must be a Buffer containing valid AITRIOS metadata.</dd>
+    </dl>
+
+    <h3>Output</h3>
+    <dl class="message-properties">
+        <dt>payload <span class="property-type">object</span></dt>
+        <dd>The deserialized JSON object containing the AITRIOS metadata.</dd>
+        <dt class="optional">error <span class="property-type">string</span> <i>(optional)</i></dt>
+        <dd>If an error occurs during deserialization, this property will contain the error message.</dd>
+    </dl>
+
+    <h3>Details</h3>
+    <p>This node deserializes AITRIOS metadata from FlatBuffers binary format to a structured JSON object. The input data must conform to the AITRIOS <code>ObjectDetectionTop</code> FlatBuffers schema.</p>
+
+    <p>The output JSON structure will look like this:</p>
+    <pre><code>{
+  "perception": {
+    "object_detection_list": [
+      {
+        "class_id": 1,
+        "score": 0.95,
+        "bounding_box": {
+          "left": 10,
+          "top": 20,
+          "right": 30,
+          "bottom": 40
+        }
+      }
+      // ... more objects
+    ]
+  }
+}</code></pre>
+
+    <h3>Error Handling</h3>
+    <p>If the input is invalid or deserialization fails, the node will:</p>
+    <ol>
+        <li>Set an error message in <code>msg.error</code></li>
+        <li>Log the error using Node-RED's error logging</li>
+        <li>Forward the message with the error information</li>
+    </ol>
+
+    <h3>Requirements</h3>
+    <p>This node requires the <code>flatbuffers</code> npm package to be installed in your Node-RED environment.</p>
+
+    <h3>Example Usage</h3>
+    <p>Connect this node to a node that outputs AITRIOS metadata in FlatBuffers format (e.g., from a camera or sensor). The deserialized JSON data can then be used by other nodes in your flow.</p>
+</script>

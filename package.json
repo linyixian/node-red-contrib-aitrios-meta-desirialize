@@ -1,0 +1,33 @@
+{
+  "name": "@linyixian/node-red-contrib-aitrios-meta-desirialize",
+  "version": "0.0.2",
+  "description": "A Node-RED node to deserialize AITRIOS metadata (FlatBuffers) to JSON.",
+  "dependencies": {
+        "flatbuffers": "^2.0.0"
+    },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "node-red" : {
+      "nodes": {
+          "aitrios-meta-desirialize": "aitrios-meta-desirialize.js"
+      }
+  },
+  "keywords": [
+    "node-red",
+    "aitrios",
+    "flatbuffers"
+  ],
+  "homepage": "https://github.com/linyixian/node-red-contrib-aitrios-meta-desirialize#readme",
+  "bugs": {
+    "url": "https://github.com/linyixian/node-red-contrib-aitrios-meta-desirialize/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/linyixian/node-red-contrib-aitrios-meta-desirialize.git"
+  },
+  "license": "Apache-2.0",
+  "author": "linyixian",
+  "type": "commonjs",
+  "main": "aitrios-meta-desirialize.js"
+}
