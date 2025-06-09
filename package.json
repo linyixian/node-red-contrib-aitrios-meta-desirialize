@@ -29,5 +29,8 @@
   "license": "Apache-2.0",
   "author": "linyixian",
   "type": "commonjs",
-  "main": "aitrios-meta-desirialize.js"
+  "main": "aitrios-meta-desirialize.js",
+  "scripts": {
+    "test": "node test/test.js"
+  }
 }
