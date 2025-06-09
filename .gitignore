@@ -134,3 +134,12 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+# Node-RED specific
+node-red-data/
+node-red-debug.log
+node-red-debug.log.*
+node-red.log
+node-red.log.*
+node-red.settings.json
+node-red.settings.json.*

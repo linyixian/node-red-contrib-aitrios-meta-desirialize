@@ -80,6 +80,28 @@ npm install
 
 # Run tests
 npm test
+
+# Lint code
+npm run lint
+
+# Format code
+npm run format
+
+# Run all checks (lint, format, test)
+npm run prepare
+```
+
+### Testing
+
+The project includes unit tests for the following scenarios:
+- Node loading
+- Invalid input handling
+- Empty buffer handling
+- Valid metadata deserialization
+
+To run the tests:
+```bash
+npm test
 ```
 
 ## 日本語
@@ -159,6 +181,28 @@ npm install @linyixian/node-red-contrib-aitrios-meta-desirialize
 npm install
 
 # テストの実行
+npm test
+
+# コードのリント
+npm run lint
+
+# コードのフォーマット
+npm run format
+
+# すべてのチェックを実行（リント、フォーマット、テスト）
+npm run prepare
+```
+
+### テスト
+
+プロジェクトには以下のシナリオのユニットテストが含まれています：
+- ノードのロード
+- 無効な入力の処理
+- 空バッファの処理
+- 有効なメタデータのデシリアライズ
+
+テストを実行するには：
+```bash
 npm test
 ```
 

@@ -1,10 +1,24 @@
 {
   "name": "@linyixian/node-red-contrib-aitrios-meta-desirialize",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A Node-RED node to deserialize AITRIOS metadata (FlatBuffers) to JSON.",
   "dependencies": {
-        "flatbuffers": "^2.0.0"
-    },
+    "flatbuffers": "^2.0.0"
+  },
+  "devDependencies": {
+    "node-red": "^3.1.0",
+    "node-red-node-test-helper": "^0.3.0",
+    "mocha": "^10.2.0",
+    "chai": "^4.3.7",
+    "eslint": "^8.56.0",
+    "prettier": "^3.2.5"
+  },
+  "scripts": {
+    "test": "mocha \"test/**/*_spec.js\"",
+    "lint": "eslint .",
+    "format": "prettier --write \"**/*.{js,json,md}\"",
+    "prepare": "npm run lint && npm run format && npm test"
+  },
   "engines": {
     "node": ">=14.0.0"
   },
