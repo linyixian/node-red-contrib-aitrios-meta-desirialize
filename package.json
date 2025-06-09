@@ -1,6 +1,6 @@
 {
   "name": "@linyixian/node-red-contrib-aitrios-meta-desirialize",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "A Node-RED node to deserialize AITRIOS metadata (FlatBuffers) to JSON.",
   "dependencies": {
     "flatbuffers": "^2.0.0"

@@ -1,7 +1,7 @@
 const flatbuffers = require('flatbuffers');
-const AitriosSchemaClasses = require('./aitrios_schema_generated').AitriosSchemaClasses;
+const AitriosSchemaClasses = require('./aitrios_schema_generated');
 
-module.exports = function (RED) {
+function AitriosMetaDeserialize(RED) {
   function AitriosMetaDeserializeNode(config) {
     RED.nodes.createNode(this, config);
     const node = this;
@@ -10,6 +10,12 @@ module.exports = function (RED) {
       try {
         if (!msg.payload || !Buffer.isBuffer(msg.payload)) {
           node.error('Input must be a Buffer containing FlatBuffers data');
+          node.send({ error: 'Input payload is not a Buffer.' });
+          return;
+        }
+
+        if (msg.payload.length === 0) {
+          node.send({ error: 'Buffer is empty.' });
           return;
         }
 
@@ -52,9 +58,13 @@ module.exports = function (RED) {
         node.send(msg);
       } catch (error) {
         node.error('Error deserializing metadata: ' + error.message);
+        node.send({ error: 'Error deserializing metadata: ' + error.message });
       }
     });
   }
 
-  RED.nodes.registerType('aitrios-meta-deserialize', AitriosMetaDeserializeNode);
-};
+  RED.nodes.registerType('aitrios-meta-desirialize', AitriosMetaDeserializeNode);
+}
+
+module.exports = AitriosMetaDeserialize;
+module.exports.AitriosSchemaClasses = AitriosSchemaClasses;

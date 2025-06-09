@@ -59,27 +59,38 @@ describe('Aitrios Meta Deserialize Node', function() {
   });
 
   it('should deserialize valid metadata', function(done) {
-    const buf = Buffer.from([
-      12,0,0,0,0,0,6,0,10,0,4,0,6,0,0,0,12,0,0,0,0,0,6,0,8,0,4,0,6,0,0,0,4,0,0,0,1,0,0,0,16,0,0,0,12,0,16,0,0,0,7,0,8,0,12,0,12,0,0,0,0,0,0,1,20,0,0,0,0,0,127,63,12,0,20,0,4,0,8,0,12,0,16,0,12,0,0,0,59,0,0,0,46,0,0,0,56,1,0,0,56,1,0,0
-    ]);
     const flow = [{ id: 'n1', type: 'aitrios-meta-desirialize', name: 'test name', wires: [['n2']] },
       { id: 'n2', type: 'helper' }];
     helper.load(require('../aitrios-meta-desirialize.js'), flow, function() {
       const n2 = helper.getNode('n2');
       const n1 = helper.getNode('n1');
+
+      const builder = new flatbuffers.Builder(0);
+      const deviceId = builder.createString('dev');
+      const inferenceId = builder.createString('inf');
+      AitriosSchemaClasses.Metadata.startInferenceResultVector(builder, 0);
+      const infVec = builder.endVector();
+      AitriosSchemaClasses.Metadata.startMetadata(builder);
+      AitriosSchemaClasses.Metadata.addTimestamp(builder, 1n);
+      AitriosSchemaClasses.Metadata.addDeviceId(builder, deviceId);
+      AitriosSchemaClasses.Metadata.addInferenceId(builder, inferenceId);
+      AitriosSchemaClasses.Metadata.addInferenceResult(builder, infVec);
+      const metadata = AitriosSchemaClasses.Metadata.endMetadata(builder);
+      builder.finish(metadata);
+
       n2.on('input', function(msg) {
         expect(msg).to.have.property('payload');
-        expect(msg.payload).to.have.property('perception');
-        expect(msg.payload.perception).to.have.property('object_detection_list');
-        expect(msg.payload.perception.object_detection_list).to.be.an('array');
+        expect(msg.payload).to.have.property('inferenceResult');
+        expect(msg.payload.inferenceResult).to.be.an('array');
         done();
       });
-      n1.receive({ payload: buf });
+
+      n1.receive({ payload: Buffer.from(builder.asUint8Array()) });
     });
   });
 
   it('should deserialize metadata correctly', function (done) {
-    const flow = [{ id: 'n1', type: 'aitrios-meta-deserialize', name: 'test name', wires: [['n2']] },
+    const flow = [{ id: 'n1', type: 'aitrios-meta-desirialize', name: 'test name', wires: [['n2']] },
       { id: 'n2', type: 'helper' }];
     helper.load(require('../aitrios-meta-desirialize.js'), flow, function () {
       const n2 = helper.getNode('n2');
@@ -109,7 +120,7 @@ describe('Aitrios Meta Deserialize Node', function() {
       // Create inference result
       const inferenceType = builder.createString('test-type');
       AitriosSchemaClasses.InferenceResult.startInferenceDataVector(builder, 1);
-      builder.putOffset(inferenceData);
+      builder.addOffset(inferenceData);
       const inferenceDataVec = builder.endVector();
       AitriosSchemaClasses.InferenceResult.startInferenceResult(builder);
       AitriosSchemaClasses.InferenceResult.addInferenceType(builder, inferenceType);
@@ -118,10 +129,10 @@ describe('Aitrios Meta Deserialize Node', function() {
 
       // Create metadata
       AitriosSchemaClasses.Metadata.startInferenceResultVector(builder, 1);
-      builder.putOffset(inferenceResult);
+      builder.addOffset(inferenceResult);
       const inferenceResultVec = builder.endVector();
       AitriosSchemaClasses.Metadata.startMetadata(builder);
-      AitriosSchemaClasses.Metadata.addTimestamp(builder, 1234567890);
+      AitriosSchemaClasses.Metadata.addTimestamp(builder, 1234567890n);
       AitriosSchemaClasses.Metadata.addDeviceId(builder, deviceId);
       AitriosSchemaClasses.Metadata.addInferenceId(builder, inferenceId);
       AitriosSchemaClasses.Metadata.addInferenceResult(builder, inferenceResultVec);
@@ -132,7 +143,7 @@ describe('Aitrios Meta Deserialize Node', function() {
 
       n2.on('input', function (msg) {
         msg.should.have.property('payload');
-        msg.payload.should.have.property('timestamp', 1234567890);
+        msg.payload.should.have.property('timestamp', 1234567890n);
         msg.payload.should.have.property('deviceId', 'test-device');
         msg.payload.should.have.property('inferenceId', 'test-inference');
         msg.payload.should.have.property('inferenceResult');
@@ -141,7 +152,8 @@ describe('Aitrios Meta Deserialize Node', function() {
         msg.payload.inferenceResult[0].should.have.property('inferenceData');
         msg.payload.inferenceResult[0].inferenceData.should.have.length(1);
         msg.payload.inferenceResult[0].inferenceData[0].should.have.property('label', 'test-label');
-        msg.payload.inferenceResult[0].inferenceData[0].should.have.property('score', 0.95);
+        msg.payload.inferenceResult[0].inferenceData[0].should.have.property('score');
+        msg.payload.inferenceResult[0].inferenceData[0].score.should.be.approximately(0.95, 0.0001);
         msg.payload.inferenceResult[0].inferenceData[0].should.have.property('bbox');
         msg.payload.inferenceResult[0].inferenceData[0].bbox.should.have.property('x', 10);
         msg.payload.inferenceResult[0].inferenceData[0].bbox.should.have.property('y', 20);
@@ -155,18 +167,13 @@ describe('Aitrios Meta Deserialize Node', function() {
   });
 
   it('should handle invalid input', function (done) {
-    const flow = [{ id: 'n1', type: 'aitrios-meta-deserialize', name: 'test name', wires: [['n2']] },
+    const flow = [{ id: 'n1', type: 'aitrios-meta-desirialize', name: 'test name', wires: [['n2']] },
       { id: 'n2', type: 'helper' }];
     helper.load(require('../aitrios-meta-desirialize.js'), flow, function () {
-      const n2 = helper.getNode('n2');
       const n1 = helper.getNode('n1');
 
-      n2.on('input', function (msg) {
-        should.fail('Should not receive message for invalid input');
-      });
-
-      n1.on('error', function (err) {
-        err.should.have.property('message', 'Input must be a Buffer containing FlatBuffers data');
+      n1.on('call:error', function (call) {
+        call.args[0].should.equal('Input must be a Buffer containing FlatBuffers data');
         done();
       });
 
